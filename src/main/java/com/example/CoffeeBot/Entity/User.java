@@ -1,4 +1,4 @@
-package com.example.CoffeBot.Entity;
+package com.example.CoffeeBot.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,10 +9,15 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+@Table(name = "users")
 @NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long telegramUserId;
+
     private Long chatId;
 
     private String firstName;

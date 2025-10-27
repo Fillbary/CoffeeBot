@@ -1,4 +1,4 @@
-package com.example.CoffeBot.Service;
+package com.example.CoffeeBot.Service;
 
 public class CoffeeMeetingService {
 }

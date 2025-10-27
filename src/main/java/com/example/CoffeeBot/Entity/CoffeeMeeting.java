@@ -1,4 +1,4 @@
-package com.example.CoffeBot.Entity;
+package com.example.CoffeeBot.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
