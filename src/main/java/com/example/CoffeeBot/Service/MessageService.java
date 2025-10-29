@@ -12,40 +12,65 @@ import java.util.List;
 
 @Service
 public class MessageService {
-
-    public SendMessage createWelcomeMessage(Long chatId) {
-        String welcomeText = """
+    public SendMessage createWelcomeMessage(Long chatId, boolean isActive) {
+        String statusText = isActive ? "активно" : "неактивно";
+        String welcomeText = String.format("""
                 👋 <b>Добро пожаловать!</b>
-                Для управления вашим участием используйте кнопку ниже:""";
+                
+                Текущий статус участия: <b>%s</b>
+                
+                Для управления вашим участием используйте кнопку ниже:""", statusText);
+        String buttonText = isActive ? "❌ Отключить участие" : "✅ Принять участие";
 
-        // Создаем кнопку
-        InlineKeyboardButton button = new InlineKeyboardButton("🎮 Управление участием");
-        button.setCallbackData("toggle_participation");
-
-        // Создаем ряд кнопок используя InlineKeyboardRow
-        InlineKeyboardRow row = new InlineKeyboardRow();
-        row.add(button);
-
-        // Создаем список рядов
-        List<InlineKeyboardRow> keyboard = new ArrayList<>();
-        keyboard.add(row);
-
-        // Создаем InlineKeyboardMarkup с клавиатурой в конструкторе
-        InlineKeyboardMarkup markup = new InlineKeyboardMarkup(keyboard);
-
-        // Создаем и возвращаем сообщение
-        SendMessage message = new SendMessage(chatId.toString(), welcomeText);
-        message.setReplyMarkup(markup);
-        message.setParseMode("HTML");
-
-        return message;
+        return createMessage(chatId, welcomeText, buttonText);
     }
 
     public SendMessage createConfirmationMessage(Long chatId, boolean isActive) {
-        return null;
+        String statusText = isActive ? "не активно" : "активно";
+        String confirmText = isActive
+        ? String.format("""
+            ❌ <b>Участие деактивировано.</b>
+            
+            Вы больше не принимаете участие в активности.
+            Статус: <b>%s</b>""", statusText)
+        : String.format("""
+            ✅ <b>Участие активировано!</b>
+            
+            Теперь вы принимаете участие в активности.
+            Статус: <b>%s</b>""", statusText);
+        String buttonText = isActive ? "✅ Принять участие" : "❌ Отключить участие";
+
+        return createMessage(chatId, confirmText, buttonText);
     }
 
-    public AnswerCallbackQuery createCallbackAnswer(String callbackId, String text) {
-        return null;
+    public AnswerCallbackQuery createCallbackAnswer(String callbackId, boolean isActive) {
+        AnswerCallbackQuery answer = new AnswerCallbackQuery(callbackId);
+        String text = isActive ? "❌ Участие деактивировано!" : "✅ Участие активировано!";
+        answer.setText(text); // Текст уведомления
+        answer.setShowAlert(false); // false - маленькое уведомление, true - alert окно
+        answer.setCacheTime(0); // Время кэширования ответа
+
+        return answer;
+    }
+
+    private InlineKeyboardMarkup makeKeyboard(String buttonText) {
+        // Создаем кнопку
+        InlineKeyboardButton button = new InlineKeyboardButton(buttonText);
+        button.setCallbackData("toggle_participation");
+        // Создаем ряд кнопок используя InlineKeyboardRow
+        InlineKeyboardRow row = new InlineKeyboardRow();
+        row.add(button);
+        // Создаем список рядов
+        List<InlineKeyboardRow> keyboard = new ArrayList<>();
+        keyboard.add(row);
+        // Создаем InlineKeyboardMarkup с клавиатурой в конструкторе
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    private SendMessage createMessage(Long chatId, String messageText, String buttonText) {
+        SendMessage message = new SendMessage(chatId.toString(), messageText);
+        message.setReplyMarkup(makeKeyboard(buttonText));
+        message.setParseMode("HTML");
+        return message;
     }
 }

@@ -18,15 +18,15 @@ public class CoffeeMeeting {
 
     @ManyToOne
     @JoinColumn(name = "user1_id")
-    private User user1;
+    private Subscriber subscriber1;
 
     @ManyToOne
     @JoinColumn(name = "user2_id")
-    private User user2;
+    private Subscriber subscriber2;
 
     @ManyToOne
     @JoinColumn(name = "user3_id")
-    private User user3;
+    private Subscriber subscriber3;
 
     private LocalDateTime createdAt;
 }

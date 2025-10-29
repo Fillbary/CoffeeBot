@@ -1,9 +1,11 @@
 package com.example.CoffeeBot;
 
+import com.example.CoffeeBot.Entity.Subscriber;
 import com.example.CoffeeBot.Service.MessageService;
-import com.example.CoffeeBot.Service.UserService;
+import com.example.CoffeeBot.Service.SubscriberService;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,7 +17,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import java.util.List;
 
 public class CoffeeBot implements LongPollingUpdateConsumer {
-    private final UserService userService;
+    private final SubscriberService subscriberService;
     private final MessageService messageService;
     private final TelegramClient telegramClient;
 
@@ -23,9 +25,8 @@ public class CoffeeBot implements LongPollingUpdateConsumer {
 
     public String getBotToken() {return "token";}
 
-
-    public CoffeeBot(String botToken, UserService userService, MessageService messageService) {
-        this.userService = userService;
+    public CoffeeBot(String botToken, SubscriberService subscriberService, MessageService messageService) {
+        this.subscriberService = subscriberService;
         this.messageService = messageService;
         telegramClient = new OkHttpTelegramClient(botToken);}
 
@@ -40,6 +41,8 @@ public class CoffeeBot implements LongPollingUpdateConsumer {
         try {
             if (update.hasMessage() && update.getMessage().hasText()) {
                 handleMessage(update.getMessage());
+            } else if (update.hasCallbackQuery() && update.getCallbackQuery().getData().equals("toggle_participation")) {
+                handleCallbackQuery(update.getCallbackQuery());
             }
         } catch (Exception e) {
             // Логирование ошибок
@@ -50,20 +53,47 @@ public class CoffeeBot implements LongPollingUpdateConsumer {
     private void handleMessage(Message message) throws TelegramApiException {
         String text = message.getText();
         Long chatId = message.getChatId();
+        User telegramUser = message.getFrom();
 
         switch (text) {
             case "/start":
-                SendMessage welcomeMessage = messageService.createWelcomeMessage(chatId);
-                telegramClient.execute(welcomeMessage);
+                handleStartCommand(chatId, telegramUser);
+                break;
+            case "/status":
+                handleStatusCommand(chatId);
                 break;
         }
     }
 
-    private void handleStartCommand(Long chatId, User telegramUser) {
-
+    private void handleStartCommand(Long chatId, User telegramUser) throws TelegramApiException {
+        // 1. Находим или создаем пользователя в БД
+        Subscriber subscriber = subscriberService.findOrCreateSubscriber(chatId, telegramUser);
+        // 2. Получаем текущий статус участия
+        boolean isActive = subscriber.isActive();
+        // 3. Отправляем приветственное сообщение с правильным статусом
+        SendMessage welcomeMessage = messageService.createWelcomeMessage(chatId, isActive);
+        telegramClient.execute(welcomeMessage);
     }
 
-    private void handleCommand(CallbackQuery callbackQuery) {
+    private void handleStatusCommand(Long chatId) throws TelegramApiException {
+        // 1. Получаем текущий статус участия
+        boolean isActive = subscriberService.isUserActive(chatId);
+        // 2. Отправляем статусное сообщение с правильным статусом
+        SendMessage statusMessage = messageService.createConfirmationMessage(chatId, isActive);
+        // 3. И меняем на противоположный
+        subscriberService.activateUserParticipation(chatId);
+        telegramClient.execute(statusMessage);
+    }
 
+    private void handleCallbackQuery(CallbackQuery callbackQuery) throws TelegramApiException {
+        boolean isActive = subscriberService.isUserActive(callbackQuery.getMessage().getChatId());
+        Long chatId = callbackQuery.getMessage().getChatId();
+
+        AnswerCallbackQuery answer = messageService.createCallbackAnswer(callbackQuery.getId(),isActive);
+        telegramClient.execute(answer);
+
+        SendMessage updateMessage = messageService.createConfirmationMessage(chatId, isActive);
+        subscriberService.activateUserParticipation(chatId);
+        telegramClient.execute(updateMessage);
     }
 }

@@ -2,7 +2,7 @@ package com.example.CoffeeBot.Config;
 
 import com.example.CoffeeBot.CoffeeBot;
 import com.example.CoffeeBot.Service.MessageService;
-import com.example.CoffeeBot.Service.UserService;
+import com.example.CoffeeBot.Service.SubscriberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
@@ -20,8 +20,8 @@ public class BotConfig {
     }
 
     @Bean
-    public CoffeeBot coffeeBot(UserService userService, MessageService messageService) {
-        return new CoffeeBot(botToken, userService, messageService);
+    public CoffeeBot coffeeBot(SubscriberService subscriberService, MessageService messageService) {
+        return new CoffeeBot(botToken, subscriberService, messageService);
     }
 
     @Bean
