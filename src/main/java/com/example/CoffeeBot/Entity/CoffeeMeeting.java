@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,7 +15,7 @@ public class CoffeeMeeting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime weekStartDate;
+    private LocalDate weekStartDate;
 
     @ManyToOne
     @JoinColumn(name = "user1_id")
@@ -29,4 +30,17 @@ public class CoffeeMeeting {
     private Subscriber subscriber3;
 
     private LocalDateTime createdAt;
+
+    public CoffeeMeeting(LocalDate weekStartDate, Subscriber subscriber1, Subscriber subscriber2) {
+        this.weekStartDate = weekStartDate;
+        this.subscriber1 = subscriber1;
+        this.subscriber2 = subscriber2;
+    }
+
+    public CoffeeMeeting(LocalDate weekStartDate, Subscriber subscriber1, Subscriber subscriber2, Subscriber subscriber3) {
+        this.weekStartDate = weekStartDate;
+        this.subscriber1 = subscriber1;
+        this.subscriber2 = subscriber2;
+        this.subscriber3 = subscriber3;
+    }
 }
