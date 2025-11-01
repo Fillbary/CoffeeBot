@@ -2,11 +2,13 @@ package com.example.CoffeeBot.Service;
 
 import com.example.CoffeeBot.Entity.Subscriber;
 import com.example.CoffeeBot.Repository.SubscriberRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class SubscriberService {
     private final SubscriberRepository subscriberRepository;
 

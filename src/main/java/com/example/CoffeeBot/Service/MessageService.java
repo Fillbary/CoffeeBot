@@ -1,5 +1,8 @@
 package com.example.CoffeeBot.Service;
 
+import com.example.CoffeeBot.Entity.CoffeeMeeting;
+import com.example.CoffeeBot.Entity.Subscriber;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,33 +14,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Slf4j
 public class MessageService {
+        private final String WELCOME_MESSAGE_TEMPLATE = """
+            👋 <b>Добро пожаловать!</b>
+        
+            Текущий статус участия: <b>%s</b>
+
+            Для управления вашим участием используйте кнопку ниже:""";
+    private final String DEACTIVATE_MESSAGE_TEMPLATE = """
+            ❌ <b>Участие деактивировано.</b>
+
+            Вы больше не принимаете участие в активности.
+            Статус: <b>%s</b>""";
+    private final String ACTIVATE_MESSAGE_TEMPLATE = """
+            ✅ <b>Участие активировано!</b>
+
+            Теперь вы принимаете участие в активности.
+            Статус: <b>%s</b>""";
+
+
     public SendMessage createWelcomeMessage(Long chatId, boolean isActive) {
         String statusText = isActive ? "активно" : "неактивно";
-        String welcomeText = String.format("""
-                👋 <b>Добро пожаловать!</b>
-                
-                Текущий статус участия: <b>%s</b>
-                
-                Для управления вашим участием используйте кнопку ниже:""", statusText);
+        String welcomeText = String.format(WELCOME_MESSAGE_TEMPLATE, statusText);
         String buttonText = isActive ? "❌ Отключить участие" : "✅ Принять участие";
-
         return createMessage(chatId, welcomeText, buttonText);
     }
 
     public SendMessage createConfirmationMessage(Long chatId, boolean isActive) {
         String statusText = isActive ? "не активно" : "активно";
         String confirmText = isActive
-        ? String.format("""
-            ❌ <b>Участие деактивировано.</b>
-            
-            Вы больше не принимаете участие в активности.
-            Статус: <b>%s</b>""", statusText)
-        : String.format("""
-            ✅ <b>Участие активировано!</b>
-            
-            Теперь вы принимаете участие в активности.
-            Статус: <b>%s</b>""", statusText);
+                ? String.format(DEACTIVATE_MESSAGE_TEMPLATE, statusText)
+                : String.format(ACTIVATE_MESSAGE_TEMPLATE, statusText);
         String buttonText = isActive ? "✅ Принять участие" : "❌ Отключить участие";
 
         return createMessage(chatId, confirmText, buttonText);
@@ -73,4 +81,6 @@ public class MessageService {
         message.setParseMode("HTML");
         return message;
     }
+
+
 }
