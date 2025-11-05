@@ -19,20 +19,15 @@ import java.util.*;
 public class PairMatchingService {
     private final SubscriberRepository subscriberRepository;
     private final CoffeeMeetingRepository coffeeMeetingRepository;
-    private final MessageService messageService;
-    private final TelegramClient telegramClient;
     private final DateUtils dateUtils;
 
     private static final int PREVIOUS_WEEKS_TO_CHECK = 1;
 
     public PairMatchingService(SubscriberRepository subscriberRepository,
                                CoffeeMeetingRepository coffeeMeetingRepository,
-                               MessageService messageService,
-                               TelegramClient telegramClient, DateUtils dateUtils) {
+                               DateUtils dateUtils) {
         this.subscriberRepository = subscriberRepository;
         this.coffeeMeetingRepository = coffeeMeetingRepository;
-        this.messageService = messageService;
-        this.telegramClient = telegramClient;
         this.dateUtils = dateUtils;
     }
 
@@ -41,13 +36,13 @@ public class PairMatchingService {
      * Выполняет полный цикл: получение активных пользователей, проверка истории, создание и сохранение встреч
      */
     @Transactional
-    public void generateWeeklyPairs() {
+    public List<CoffeeMeeting> generateWeeklyPairs() {
         List<Subscriber> activeSubscribers = subscriberRepository.findByIsActive();
         Map<Long, Set<Long>> recentMeetings = getRecentMeetingsMap();
 
         List<CoffeeMeeting> meetings = generatePairs(activeSubscribers, recentMeetings);
 
-        coffeeMeetingRepository.saveAll(meetings);
+        return coffeeMeetingRepository.saveAll(meetings);
     }
 
     /**

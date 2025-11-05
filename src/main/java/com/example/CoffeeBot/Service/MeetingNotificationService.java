@@ -15,16 +15,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MeetingNotificationService {
     private final CreateMeetingMessageService createMeetingMessageService;
+    private final PairMatchingService pairMatchingService;
+
+    public List<SendMessage> createNotificationsToUser() {
+        List<SendMessage> notificationsToUsers = new ArrayList<>();
+        List<CoffeeMeeting> coffeeMeetings = pairMatchingService.generateWeeklyPairs();
+        for (CoffeeMeeting coffeeMeeting : coffeeMeetings) {
+            for (Subscriber subscriber : getMeetingSubscribers(coffeeMeeting)) {
+                notificationsToUsers.add(createNotificationToUser(coffeeMeeting, subscriber));
+            }
+        }
+        return notificationsToUsers;
+    }
 
     public SendMessage createNotificationToUser(CoffeeMeeting meeting, Subscriber subscriber) {
         if(meeting == null || subscriber == null) {
             throw new IllegalArgumentException("Missing a follower or meeting");
         }
         return createMeetingMessageService.createMeetingMessage(subscriber.getChatId(), meeting, subscriber);
-    }
-
-    public SendMessage sendMeetingNotifications() {
-        // TODO
     }
 
     private List<Subscriber> getMeetingSubscribers(CoffeeMeeting meeting) {

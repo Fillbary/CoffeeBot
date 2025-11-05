@@ -1,37 +1,46 @@
 package com.example.CoffeeBot;
 
-import com.example.CoffeeBot.Handler.MessageHandler;
 import com.example.CoffeeBot.Handler.CallbackHandler;
-import com.example.CoffeeBot.Handler.UpdateHandler;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import com.example.CoffeeBot.Handler.MessageHandler;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 
 import java.util.List;
 
 public class CoffeeBot implements LongPollingUpdateConsumer {
-    private final UpdateHandler updateHandler;
     private final TelegramClient telegramClient;
+    private final MessageHandler messageHandler;
+    private final CallbackHandler callbackHandler;
 
-    public String getBotUserName() {
-        return "username";
-    }
-
-    public String getBotToken() {
-        return "token";
-    }
-
-    public CoffeeBot(String botToken, UpdateHandler updateHandler) {
-        this.updateHandler = updateHandler;
-        this.telegramClient = new OkHttpTelegramClient(botToken);
+    public CoffeeBot(TelegramClient telegramClient, MessageHandler messageHandler, CallbackHandler callbackHandler) {
+        this.telegramClient = telegramClient;
+        this.messageHandler = messageHandler;
+        this.callbackHandler = callbackHandler;
     }
 
     @Override
     public void consume(List<Update> updates) {
         for (Update update : updates) {
-            updateHandler.handleUpdate(update);
+            try {
+                handleUpdate(update);
+            } catch (TelegramApiException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private void handleUpdate(Update update) throws TelegramApiException {
+        if(update.hasMessage() && update.getMessage().hasText()) {
+            SendMessage response = messageHandler.handleMessage(update.getMessage());
+            telegramClient.execute(response);
+        } else if (update.hasCallbackQuery()) {
+            CallbackHandler.CallbackDTO CallbackDTO = callbackHandler.handleCallbackQuery(update.getCallbackQuery());
+            telegramClient.execute(CallbackDTO.answerCallbackQuery());
+            telegramClient.execute(CallbackDTO.sendMessage());
         }
     }
 }

@@ -6,52 +6,42 @@ import com.example.CoffeeBot.Service.SubscriberService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 public class MessageHandler {
     private final SubscriberService subscriberService;
     private final MessageService messageService;
-    private final TelegramClient telegramClient;
 
-    public MessageHandler(SubscriberService subscriberService, MessageService messageService, TelegramClient telegramClient) {
+    public MessageHandler(SubscriberService subscriberService, MessageService messageService) {
         this.subscriberService = subscriberService;
         this.messageService = messageService;
-        this.telegramClient = telegramClient;
     }
 
-    public void handleMessage(Message message) throws TelegramApiException {
+    public SendMessage handleMessage(Message message) {
         String text = message.getText();
-        Long chatId = message.getChatId();
-        User telegramUser = message.getFrom();
 
-        switch (text) {
-            case "/start":
-                handleStartCommand(chatId, telegramUser);
-                break;
-            case "/status":
-                handleStatusCommand(chatId);
-                break;
+        if ("/start".equals(text)) {
+            return handleStartCommand(message.getChatId(), message.getFrom());
+        } else if ("/status".equals(text)) {
+            return handleStatusCommand(message.getChatId());
         }
+        return new SendMessage(message.getChatId().toString(), "Unknown command");
     }
 
-    private void handleStartCommand(Long chatId, User telegramUser) throws TelegramApiException {
+    private SendMessage handleStartCommand(Long chatId, User telegramUser) {
         // 1. Находим или создаем пользователя в БД
         Subscriber subscriber = subscriberService.findOrCreateSubscriber(chatId, telegramUser);
         // 2. Получаем текущий статус участия
         boolean isActive = subscriber.isActive();
-        // 3. Отправляем приветственное сообщение с правильным статусом
-        SendMessage welcomeMessage = messageService.createWelcomeMessage(chatId, isActive);
-        telegramClient.execute(welcomeMessage);
+        // 3. Возвращаем приветственное сообщение с правильным статусом
+        return messageService.createWelcomeMessage(chatId, isActive);
     }
 
-    private void handleStatusCommand(Long chatId) throws TelegramApiException {
+    private SendMessage handleStatusCommand(Long chatId) {
         // 1. Получаем текущий статус участия
         boolean isActive = subscriberService.isUserActive(chatId);
-        // 2. Отправляем статусное сообщение с правильным статусом
-        SendMessage statusMessage = messageService.createConfirmationMessage(chatId, isActive);
-        // 3. И меняем на противоположный
+        // 2. Меняем на противоположный
         subscriberService.activateUserParticipation(chatId);
-        telegramClient.execute(statusMessage);
+        // 3. Возвращаем статусное сообщение с правильным статусом
+        return messageService.createConfirmationMessage(chatId, isActive);
     }
 }
