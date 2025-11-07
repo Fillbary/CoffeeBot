@@ -27,10 +27,6 @@ public class WeeklyMeetingScheduler {
     @Scheduled(cron = "0 0 10 * * MON")
     public void scheduleWeeklyPairGeneration() {
         try {
-            // Этот вызов автоматически:
-            // 1. Сгенерирует пары через PairMatchingService
-            // 2. Создаст уведомления через MeetingNotificationService
-            // 3. Отправит сообщения через NotificationSender
             notificationSender.sendNotification();
             log.info("✅ Weekly coffee meeting generation completed successfully!");
         } catch (TelegramApiException e) {

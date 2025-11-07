@@ -17,6 +17,12 @@ public class MeetingNotificationService {
     private final CreateMeetingMessageService createMeetingMessageService;
     private final PairMatchingService pairMatchingService;
 
+    /**
+     * Создает уведомления для всех пользователей о назначенных кофе-встречах
+     * Генерирует пары на неделю и создает персонализированные сообщения для каждого участника
+     *
+     * @return список SendMessage с уведомлениями для отправки пользователям
+     */
     public List<SendMessage> createNotificationsToUser() {
         List<SendMessage> notificationsToUsers = new ArrayList<>();
         List<CoffeeMeeting> coffeeMeetings = pairMatchingService.generateWeeklyPairs();
@@ -28,6 +34,15 @@ public class MeetingNotificationService {
         return notificationsToUsers;
     }
 
+    /**
+     * Создает персонализированное уведомление для конкретного пользователя о его кофе-встрече
+     * Сообщение содержит информацию о партнерах и детали встречи
+     *
+     * @param meeting встреча, для которой создается уведомление
+     * @param subscriber подписчик, получающий уведомление
+     * @return SendMessage с персонализированным уведомлением о встрече
+     * @throws IllegalArgumentException если meeting или subscriber равны null
+     */
     public SendMessage createNotificationToUser(CoffeeMeeting meeting, Subscriber subscriber) {
         if(meeting == null || subscriber == null) {
             throw new IllegalArgumentException("Missing a follower or meeting");
@@ -35,6 +50,13 @@ public class MeetingNotificationService {
         return createMeetingMessageService.createMeetingMessage(subscriber.getChatId(), meeting, subscriber);
     }
 
+    /**
+     * Извлекает всех участников кофе-встречи
+     * Включает всех подписчиков встречи (от 1 до 3 участников)
+     *
+     * @param meeting встреча, из которой извлекаются участники
+     * @return список всех участников встречи
+     */
     private List<Subscriber> getMeetingSubscribers(CoffeeMeeting meeting) {
         List<Subscriber> meetingSubscribers = new ArrayList<>();
 

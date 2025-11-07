@@ -6,21 +6,18 @@ import lombok.Getter;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
+
 
 public class CallbackHandler {
     private final SubscriberService subscriberService;
     private final MessageService messageService;
-    private final TelegramClient telegramClient;
 
-    public CallbackHandler(SubscriberService subscriberService, MessageService messageService, TelegramClient telegramClientl) {
+    public CallbackHandler(SubscriberService subscriberService, MessageService messageService) {
         this.subscriberService = subscriberService;
         this.messageService = messageService;
-        this.telegramClient = telegramClientl;
     }
 
-    public CallbackDTO handleCallbackQuery(CallbackQuery callbackQuery) throws TelegramApiException {
+    public CallbackDTO handleCallbackQuery(CallbackQuery callbackQuery){
         // 1. Получаем текущий статус участия
         boolean isActive = subscriberService.isUserActive(callbackQuery.getMessage().getChatId());
         // 2. Получаем айди чата

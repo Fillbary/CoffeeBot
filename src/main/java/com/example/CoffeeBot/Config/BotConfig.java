@@ -1,18 +1,23 @@
 package com.example.CoffeeBot.Config;
 
 import com.example.CoffeeBot.CoffeeBot;
+import com.example.CoffeeBot.Handler.CallbackHandler;
+import com.example.CoffeeBot.Handler.MessageHandler;
 import com.example.CoffeeBot.Service.MessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Configuration
 public class BotConfig {
 
-    private final String botUserName = "BELZE_bot";
-    private final String botToken = "5805073689:AAFgbNTbM1N09I7Ez7OvKhvCP3tvNcDHQQU";
+    @Value("${bot-token}")
+    private String botToken;
 
     @Bean
     public TelegramBotsLongPollingApplication telegramBotApi() throws TelegramApiException {
@@ -20,8 +25,23 @@ public class BotConfig {
     }
 
     @Bean
-    public CoffeeBot coffeeBot(SubscriberService subscriberService, MessageService messageService) {
-        return new CoffeeBot(botToken, subscriberService, messageService);
+    public TelegramClient telegramClient() {
+        return new OkHttpTelegramClient(botToken);
+    }
+
+    @Bean
+    public MessageHandler messageHandler(SubscriberService subscriberService, MessageService messageService) {
+        return new MessageHandler(subscriberService, messageService);
+    }
+
+    @Bean
+    public CallbackHandler callbackHandler(SubscriberService subscriberService, MessageService messageService) {
+        return new CallbackHandler(subscriberService, messageService);
+    }
+
+    @Bean
+    public CoffeeBot coffeeBot(TelegramClient telegramClient, MessageHandler messageHandler, CallbackHandler callbackHandler) {
+        return new CoffeeBot(telegramClient, messageHandler, callbackHandler);
     }
 
     @Bean

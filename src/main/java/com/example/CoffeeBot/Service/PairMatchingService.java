@@ -8,7 +8,6 @@ import com.example.CoffeeBot.Utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -34,6 +33,8 @@ public class PairMatchingService {
     /**
      * Основной метод для еженедельного формирования пар
      * Выполняет полный цикл: получение активных пользователей, проверка истории, создание и сохранение встреч
+     *
+     * @return список созданных и сохраненных встреч CoffeeMeeting
      */
     @Transactional
     public List<CoffeeMeeting> generateWeeklyPairs() {
@@ -98,18 +99,18 @@ public class PairMatchingService {
      * Приоритет отдается подписчикам, которые еще не встречались с исходным подписчиком.
      * Если все кандидаты уже встречались - возвращает первого доступного партнера.
      *
-     * @param subscriber1    подписчик, для которого ищется партнер
+     * @param subscriber    подписчик, для которого ищется партнер
      * @param availableUsers список доступных для выбора подписчиков
      * @param startIndex     индекс в списке availableUsers, с которого начинать поиск кандидатов
      * @param recentMeetings карта истории встреч для проверки повторных встреч
      * @return наилучший доступный партнер для создания встречи
      */
-    private Subscriber findBestPartner(Subscriber subscriber1, List<Subscriber> availableUsers,
+    private Subscriber findBestPartner(Subscriber subscriber, List<Subscriber> availableUsers,
                                        int startIndex, Map<Long, Set<Long>> recentMeetings) {
         // Сначала ищем тех, кто не встречался
         for (int i = startIndex; i < availableUsers.size(); i++) {
             Subscriber candidate = availableUsers.get(i);
-            if (!haveSubscribersMetRecently(subscriber1, candidate, recentMeetings)) {
+            if (!haveSubscribersMetRecently(subscriber, candidate, recentMeetings)) {
                 return candidate;
             }
         }
