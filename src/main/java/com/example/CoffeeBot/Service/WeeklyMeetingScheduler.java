@@ -23,8 +23,9 @@ public class WeeklyMeetingScheduler {
      * - * - любой день месяца
      * - * - любой месяц
      * - MON - понедельник
+     *
      */
-    @Scheduled(cron = "0 0 10 * * MON")
+    @Scheduled(cron = "*/10 * * * * *")
     public void scheduleWeeklyPairGeneration() {
         try {
             notificationSender.sendNotification();

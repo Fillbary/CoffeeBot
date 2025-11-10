@@ -3,7 +3,7 @@ package com.example.CoffeeBot.Config;
 import com.example.CoffeeBot.CoffeeBot;
 import com.example.CoffeeBot.Handler.CallbackHandler;
 import com.example.CoffeeBot.Handler.MessageHandler;
-import com.example.CoffeeBot.Service.MessageService;
+import com.example.CoffeeBot.Service.CreateMessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,13 +30,13 @@ public class BotConfig {
     }
 
     @Bean
-    public MessageHandler messageHandler(SubscriberService subscriberService, MessageService messageService) {
-        return new MessageHandler(subscriberService, messageService);
+    public MessageHandler messageHandler(SubscriberService subscriberService, CreateMessageService createMessageService) {
+        return new MessageHandler(subscriberService, createMessageService);
     }
 
     @Bean
-    public CallbackHandler callbackHandler(SubscriberService subscriberService, MessageService messageService) {
-        return new CallbackHandler(subscriberService, messageService);
+    public CallbackHandler callbackHandler(SubscriberService subscriberService, CreateMessageService createMessageService) {
+        return new CallbackHandler(subscriberService, createMessageService);
     }
 
     @Bean

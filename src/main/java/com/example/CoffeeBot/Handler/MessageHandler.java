@@ -1,7 +1,7 @@
 package com.example.CoffeeBot.Handler;
 
 import com.example.CoffeeBot.Entity.Subscriber;
-import com.example.CoffeeBot.Service.MessageService;
+import com.example.CoffeeBot.Service.CreateMessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -9,11 +9,11 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 public class MessageHandler {
     private final SubscriberService subscriberService;
-    private final MessageService messageService;
+    private final CreateMessageService createMessageService;
 
-    public MessageHandler(SubscriberService subscriberService, MessageService messageService) {
+    public MessageHandler(SubscriberService subscriberService, CreateMessageService createMessageService) {
         this.subscriberService = subscriberService;
-        this.messageService = messageService;
+        this.createMessageService = createMessageService;
     }
 
     public SendMessage handleMessage(Message message) {
@@ -33,7 +33,7 @@ public class MessageHandler {
         // 2. Получаем текущий статус участия
         boolean isActive = subscriber.isActive();
         // 3. Возвращаем приветственное сообщение с правильным статусом
-        return messageService.createWelcomeMessage(chatId, isActive);
+        return createMessageService.createWelcomeMessage(chatId, isActive);
     }
 
     private SendMessage handleStatusCommand(Long chatId) {
@@ -42,6 +42,6 @@ public class MessageHandler {
         // 2. Меняем на противоположный
         subscriberService.activateUserParticipation(chatId);
         // 3. Возвращаем статусное сообщение с правильным статусом
-        return messageService.createConfirmationMessage(chatId, isActive);
+        return createMessageService.createConfirmationMessage(chatId, isActive);
     }
 }

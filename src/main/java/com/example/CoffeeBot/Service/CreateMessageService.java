@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class MessageService {
+public class CreateMessageService {
     private static final String WELCOME_MESSAGE_TEMPLATE = """
             👋 <b>Добро пожаловать!</b>
                     
@@ -83,6 +83,21 @@ public class MessageService {
     }
 
     /**
+     * Вспомогательный метод для создания сообщения с клавиатурой
+     *
+     * @param chatId идентификатор чата получателя
+     * @param messageText текст сообщения
+     * @param buttonText текст для кнопки
+     * @return SendMessage с настроенным текстом и клавиатурой
+     */
+    private SendMessage createMessage(Long chatId, String messageText, String buttonText) {
+        SendMessage message = new SendMessage(chatId.toString(), messageText);
+        message.setReplyMarkup(makeKeyboard(buttonText));
+        message.setParseMode("HTML");
+        return message;
+    }
+
+    /**
      * Создает inline клавиатуру с одной кнопкой для управления участием
      *
      * @param buttonText текст для отображения на кнопке
@@ -100,21 +115,6 @@ public class MessageService {
         keyboard.add(row);
         // Создаем InlineKeyboardMarkup с клавиатурой в конструкторе
         return new InlineKeyboardMarkup(keyboard);
-    }
-
-    /**
-     * Вспомогательный метод для создания сообщения с клавиатурой
-     *
-     * @param chatId идентификатор чата получателя
-     * @param messageText текст сообщения
-     * @param buttonText текст для кнопки
-     * @return SendMessage с настроенным текстом и клавиатурой
-     */
-    private SendMessage createMessage(Long chatId, String messageText, String buttonText) {
-        SendMessage message = new SendMessage(chatId.toString(), messageText);
-        message.setReplyMarkup(makeKeyboard(buttonText));
-        message.setParseMode("HTML");
-        return message;
     }
 
 
