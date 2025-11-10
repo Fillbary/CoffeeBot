@@ -2,7 +2,6 @@ package com.example.CoffeeBot.Handler;
 
 import com.example.CoffeeBot.Service.MessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
-import lombok.Getter;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -33,7 +32,6 @@ public class CallbackHandler {
         return new CallbackDTO(answer, updateMessage);
     }
 
-    @Getter
     public record CallbackDTO(AnswerCallbackQuery answerCallbackQuery, SendMessage sendMessage) {
     }
 }

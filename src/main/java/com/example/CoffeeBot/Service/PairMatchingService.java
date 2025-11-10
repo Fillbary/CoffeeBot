@@ -38,7 +38,7 @@ public class PairMatchingService {
      */
     @Transactional
     public List<CoffeeMeeting> generateWeeklyPairs() {
-        List<Subscriber> activeSubscribers = subscriberRepository.findByIsActive();
+        List<Subscriber> activeSubscribers = subscriberRepository.findByIsActive(true);
         Map<Long, Set<Long>> recentMeetings = getRecentMeetingsMap();
 
         List<CoffeeMeeting> meetings = generatePairs(activeSubscribers, recentMeetings);
@@ -60,7 +60,7 @@ public class PairMatchingService {
         List<CoffeeMeeting> newMeetings = createBasicPairs(shuffledSubscribers, recentMeetings);
 
         if (shuffledSubscribers.size() % 2 != 0) {
-            handleOddSubscriber(shuffledSubscribers.getLast(), newMeetings, nextWeek);
+            handleOddSubscriber(shuffledSubscribers.get(shuffledSubscribers.size()-1), newMeetings, nextWeek);
         }
 
         return newMeetings;

@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Configuration
 public class BotConfig {
 
-    @Value("${bot-token}")
+    @Value("${bot.token}")
     private String botToken;
 
     @Bean

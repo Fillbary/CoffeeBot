@@ -12,5 +12,5 @@ public interface SubscriberRepository extends JpaRepository<Subscriber, Long> {
 
     Subscriber findByChatId(Long id);
 
-    List<Subscriber> findByIsActive();
+    List<Subscriber> findByIsActive(boolean isActive);
 }
