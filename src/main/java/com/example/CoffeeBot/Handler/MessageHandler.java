@@ -1,7 +1,7 @@
 package com.example.CoffeeBot.Handler;
 
 import com.example.CoffeeBot.Entity.Subscriber;
-import com.example.CoffeeBot.Service.MessageService;
+import com.example.CoffeeBot.Service.CreateMessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
@@ -9,9 +9,9 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 public class MessageHandler {
     private final SubscriberService subscriberService;
-    private final MessageService messageService;
+    private final CreateMessageService messageService;
 
-    public MessageHandler(SubscriberService subscriberService, MessageService messageService) {
+    public MessageHandler(SubscriberService subscriberService, CreateMessageService messageService) {
         this.subscriberService = subscriberService;
         this.messageService = messageService;
     }

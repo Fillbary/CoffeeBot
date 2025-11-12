@@ -1,6 +1,6 @@
 package com.example.CoffeeBot.Handler;
 
-import com.example.CoffeeBot.Service.MessageService;
+import com.example.CoffeeBot.Service.CreateMessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,9 +9,9 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
 public class CallbackHandler {
     private final SubscriberService subscriberService;
-    private final MessageService messageService;
+    private final CreateMessageService messageService;
 
-    public CallbackHandler(SubscriberService subscriberService, MessageService messageService) {
+    public CallbackHandler(SubscriberService subscriberService, CreateMessageService messageService) {
         this.subscriberService = subscriberService;
         this.messageService = messageService;
     }
