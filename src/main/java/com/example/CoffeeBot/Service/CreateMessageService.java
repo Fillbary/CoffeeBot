@@ -1,5 +1,6 @@
 package com.example.CoffeeBot.Service;
 
+import com.example.CoffeeBot.Entity.Subscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
@@ -38,7 +39,7 @@ public class CreateMessageService {
         String statusText = isActive ? "активно" : "неактивно";
         String welcomeText = String.format(WELCOME_MESSAGE_TEMPLATE, statusText);
         String buttonText = isActive ? "❌ Отключить участие" : "✅ Принять участие";
-        return MessageKeyboardUtils.createMessage(chatId, welcomeText, buttonText);
+        return MessageKeyboardUtils.createMessageWithButton(chatId, welcomeText, buttonText);
     }
 
     /**
@@ -56,7 +57,7 @@ public class CreateMessageService {
                 : String.format(ACTIVATE_MESSAGE_TEMPLATE, statusText);
         String buttonText = isActive ? "✅ Принять участие" : "❌ Отключить участие";
 
-        return MessageKeyboardUtils.createMessage(chatId, confirmText, buttonText);
+        return MessageKeyboardUtils.createMessageWithButton(chatId, confirmText, buttonText);
     }
 
     /**
@@ -64,7 +65,7 @@ public class CreateMessageService {
      * Отображает всплывающее уведомление пользователю
      *
      * @param callbackId идентификатор callback запроса
-     * @param isActive новый статус активности после изменения
+     * @param isActive   новый статус активности после изменения
      * @return AnswerCallbackQuery для отправки в Telegram
      */
     public AnswerCallbackQuery createCallbackAnswer(String callbackId, boolean isActive) {

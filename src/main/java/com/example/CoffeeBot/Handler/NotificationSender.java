@@ -21,7 +21,7 @@ public class NotificationSender {
     private final TelegramClient telegramClient;
 
     public void sendNotification() throws TelegramApiException {
-        List<SendMessage> notifications = meetingNotificationService.createNotificationsToUser();
+        List<SendMessage> notifications = meetingNotificationService.createNotificationsToUsers();
         for (SendMessage notification : notifications) {
             try {
                 telegramClient.execute(notification);
@@ -29,6 +29,23 @@ public class NotificationSender {
                 Thread.sleep(100);
             } catch (TelegramApiException e) {
                 log.error("Failed to send notification to chat: {}", notification.getChatId(), e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("Notification sending interrupted", e);
+                break;
+            }
+        }
+    }
+
+    public void sendCancelNotification(CoffeeMeeting meeting, Subscriber canceledBy) throws TelegramApiException {
+        List<SendMessage> cancelNotifications = meetingNotificationService.createCancellationNotificationsToUsers(meeting, canceledBy);
+        for (SendMessage cancelNotification : cancelNotifications) {
+            try {
+                telegramClient.execute(cancelNotification);
+                log.info("Notification sent to chat: {}", cancelNotification.getChatId());
+                Thread.sleep(100);
+            } catch (TelegramApiException e) {
+                log.error("Failed to send notification to chat: {}", cancelNotification.getChatId(), e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 log.error("Notification sending interrupted", e);

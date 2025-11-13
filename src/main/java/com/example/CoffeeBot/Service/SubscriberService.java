@@ -20,13 +20,13 @@ public class SubscriberService {
      * Находит существующего подписчика по Telegram ID или создает нового
      * Обновляет chatId если подписчик уже существует
      *
-     * @param chatId идентификатор чата пользователя
+     * @param chatId       идентификатор чата пользователя
      * @param telegramUser объект пользователя Telegram
      * @return найденный или созданный подписчик
      */
     public Subscriber findOrCreateSubscriber(Long chatId, org.telegram.telegrambots.meta.api.objects.User telegramUser) {
         Subscriber subscriber = subscriberRepository.findByTelegramUserId(telegramUser.getId());
-        if(subscriber != null) {
+        if (subscriber != null) {
             subscriber.setChatId(chatId);
             return subscriberRepository.save(subscriber);
         } else {
@@ -34,13 +34,17 @@ public class SubscriberService {
         }
     }
 
+    public Subscriber findByChatId(Long chatId) {
+        return subscriberRepository.findByChatId(chatId);
+    }
+
     /**
-     * Активирует или деактивирует участие пользователя в кофе-брейках
+     * Переключает участие пользователя в кофе-брейках
      * Переключает текущий статус активности на противоположный
      *
      * @param chatId идентификатор чата пользователя
      */
-    public void activateUserParticipation(Long chatId) {
+    public void toggleUserParticipation(Long chatId) {
         Subscriber subscriber = subscriberRepository.findByChatId(chatId);
         subscriber.setActive(!subscriber.isActive());
         subscriberRepository.save(subscriber);

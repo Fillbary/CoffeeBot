@@ -40,7 +40,7 @@ public class MessageHandler {
         // 1. Получаем текущий статус участия
         boolean isActive = subscriberService.isUserActive(chatId);
         // 2. Меняем на противоположный
-        subscriberService.activateUserParticipation(chatId);
+        subscriberService.toggleUserParticipation(chatId);
         // 3. Возвращаем статусное сообщение с правильным статусом
         return messageService.createConfirmationMessage(chatId, isActive);
     }

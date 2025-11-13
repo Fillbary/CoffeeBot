@@ -2,36 +2,33 @@ package com.example.CoffeeBot.Handler;
 
 import com.example.CoffeeBot.Service.CreateMessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 
-
-public class CallbackHandler {
+@Slf4j
+@Component
+public class ParticipationToggleHandler {
     private final SubscriberService subscriberService;
     private final CreateMessageService messageService;
 
-    public CallbackHandler(SubscriberService subscriberService, CreateMessageService messageService) {
+
+    public ParticipationToggleHandler(SubscriberService subscriberService, CreateMessageService messageService) {
         this.subscriberService = subscriberService;
         this.messageService = messageService;
     }
 
-    public CallbackDTO handleCallbackQuery(CallbackQuery callbackQuery){
-        // 1. Получаем текущий статус участия
+
+    public CallbackDTO handleToggleParticipation(CallbackQuery callbackQuery) {
         boolean isActive = subscriberService.isUserActive(callbackQuery.getMessage().getChatId());
-        // 2. Получаем айди чата
         Long chatId = callbackQuery.getMessage().getChatId();
-        // 3. Меняем статус подписчика после нажатия кнопки
-        subscriberService.activateUserParticipation(chatId);
-
-        // 4. Формируем ответ на нажатие кнопки в виде всплывающего окна
+        subscriberService.toggleUserParticipation(chatId);
         AnswerCallbackQuery answer = messageService.createCallbackAnswer(callbackQuery.getId(), isActive);
-
-        // 5. Формируем сообщение подтверждение
         SendMessage updateMessage = messageService.createConfirmationMessage(chatId, isActive);
         return new CallbackDTO(answer, updateMessage);
     }
 
-    public record CallbackDTO(AnswerCallbackQuery answerCallbackQuery, SendMessage sendMessage) {
-    }
+    public record CallbackDTO(AnswerCallbackQuery answerCallbackQuery, SendMessage sendMessage) {}
 }

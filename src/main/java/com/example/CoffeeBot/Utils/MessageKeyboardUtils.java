@@ -17,9 +17,36 @@ public class MessageKeyboardUtils {
      * @param buttonText текст для кнопки
      * @return SendMessage с настроенным текстом и клавиатурой
      */
-    public static SendMessage createMessage(Long chatId, String messageText, String buttonText) {
+    public static SendMessage createMessageWithButton(Long chatId, String messageText, String buttonText) {
         SendMessage message = new SendMessage(chatId.toString(), messageText);
         message.setReplyMarkup(makeKeyboard(buttonText));
+        message.setParseMode("HTML");
+        return message;
+    }
+
+    /**
+     * Создает сообщение с кнопкой отмены встречи
+     *
+     * @param chatId идентификатор чата получателя
+     * @param messageText текст сообщения
+     * @return SendMessage с кнопкой отмены встречи
+     */
+    public static SendMessage createMessageWithCancelButton(Long chatId, String messageText) {
+        SendMessage message = new SendMessage(chatId.toString(), messageText);
+        message.setReplyMarkup(makeCancelKeyboard());
+        message.setParseMode("HTML");
+        return message;
+    }
+
+    /**
+     * Вспомогательный метод для создания сообщения
+     *
+     * @param chatId идентификатор чата получателя
+     * @param messageText текст сообщения
+     * @return SendMessage с настроенным текстом и клавиатурой
+     */
+    public static SendMessage createMessage(Long chatId, String messageText) {
+        SendMessage message = new SendMessage(chatId.toString(), messageText);
         message.setParseMode("HTML");
         return message;
     }
@@ -41,6 +68,19 @@ public class MessageKeyboardUtils {
         List<InlineKeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(row);
         // Создаем InlineKeyboardMarkup с клавиатурой в конструкторе
+        return new InlineKeyboardMarkup(keyboard);
+    }
+
+    public static InlineKeyboardMarkup makeCancelKeyboard() {
+        InlineKeyboardButton button = new InlineKeyboardButton("❌ Отменить встречу");
+        button.setCallbackData("cancel_meeting");
+
+        InlineKeyboardRow row = new InlineKeyboardRow();
+        row.add(button);
+
+        List<InlineKeyboardRow> keyboard = new ArrayList<>();
+        keyboard.add(row);
+
         return new InlineKeyboardMarkup(keyboard);
     }
 }

@@ -2,13 +2,11 @@ package com.example.CoffeeBot.Utils;
 
 import com.example.CoffeeBot.Entity.CoffeeMeeting;
 import com.example.CoffeeBot.Entity.Subscriber;
-import com.example.CoffeeBot.Utils.MessageKeyboardUtils;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MeetingMessageGenerator {
+public class MessageGeneratorUtils {
     private static final String PAIR_MESSAGE_TEMPLATE = """
             ☕ <b>Кофе-митинг назначен!</b> ☕
                     
@@ -52,30 +50,26 @@ public class MeetingMessageGenerator {
                     
             Надеемся, в следующий раз повезет больше! ✨
             """;
+    private static final String CANCELLATION_MESSAGE = """
+                    🤷‍♂️ <b>Партнер отменил встречу</b>
+                
+            %s не сможет встретиться на этой неделе.
+                
+            Не беда! У вас будет новая возможность на следующей неделе.
+                
+            А пока можете:
+            • Найти компанию в общем чате
+            • Присоединиться к другой паре
+            • Перенести встречу
+                
+            Удачи! ✨
+            """;
 
-    /**
-     * Создает объект SendMessage с HTML разметкой
-     *
-     * @param chatId      идентификатор чата
-     * @param messageText текст сообщения
-     * @return настроенный объект SendMessage
-     */
-    public static SendMessage createSendMessage(Long chatId, String messageText, String buttonText) {
-        return MessageKeyboardUtils.createMessage(chatId, messageText, buttonText);
-    }
 
-    /**
-     * Получает партнеров для текущего подписчика из встречи
-     * Для парных встреч возвращает одного партнера, для тройных - двух партнеров
-     *
-     * @param meeting    объект встречи
-     * @param subscriber текущий подписчик
-     * @return список партнеров (1 для парной встречи, 2 для тройной встречи)
-     */
-    public static List<Subscriber> getPartners(CoffeeMeeting meeting, Subscriber subscriber) {
+    public static List<Subscriber> getMeetingSubscribers(CoffeeMeeting meeting) {
         List<Subscriber> meetingSubscribers = new ArrayList<>();
 
-        // Добавляем всех участников кроме текущего подписчика
+
         if (meeting.getSubscriber1() != null) {
             meetingSubscribers.add(meeting.getSubscriber1());
         }
@@ -85,8 +79,11 @@ public class MeetingMessageGenerator {
         if (meeting.getSubscriber3() != null) {
             meetingSubscribers.add(meeting.getSubscriber3());
         }
-
         return meetingSubscribers;
+    }
+
+    public static String formatCancellationMessage(Subscriber cancelledBy) {
+        return String.format(CANCELLATION_MESSAGE, cancelledBy.getUserName());
     }
 
     /**
