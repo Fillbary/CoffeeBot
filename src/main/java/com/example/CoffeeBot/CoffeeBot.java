@@ -3,7 +3,9 @@ package com.example.CoffeeBot;
 import com.example.CoffeeBot.Handler.MeetingCancellationHandler;
 import com.example.CoffeeBot.Handler.ParticipationToggleHandler;
 import com.example.CoffeeBot.Handler.MessageHandler;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -13,7 +15,9 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.List;
 
+@Component
 @Slf4j
+@Data
 public class CoffeeBot implements LongPollingUpdateConsumer {
     private final TelegramClient telegramClient;
     private final MessageHandler messageHandler;
@@ -22,12 +26,12 @@ public class CoffeeBot implements LongPollingUpdateConsumer {
 
     public CoffeeBot(TelegramClient telegramClient,
                      MessageHandler messageHandler,
-                     MeetingCancellationHandler cancellationHandler,
-                     ParticipationToggleHandler participationHandler) {
+                     ParticipationToggleHandler participationHandler,
+                     MeetingCancellationHandler cancellationHandler) {
         this.telegramClient = telegramClient;
         this.messageHandler = messageHandler;
-        this.cancellationHandler = cancellationHandler;
         this.participationHandler = participationHandler;
+        this.cancellationHandler = cancellationHandler;
     }
 
     @Override

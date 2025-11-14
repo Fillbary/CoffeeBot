@@ -1,17 +1,21 @@
 package com.example.CoffeeBot.Handler;
 
 import com.example.CoffeeBot.Entity.Subscriber;
-import com.example.CoffeeBot.Service.MessageService;
+import com.example.CoffeeBot.Service.CreateMessageService;
 import com.example.CoffeeBot.Service.SubscriberService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 
+@Slf4j
+@Component
 public class MessageHandler {
     private final SubscriberService subscriberService;
-    private final MessageService messageService;
+    private final CreateMessageService messageService;
 
-    public MessageHandler(SubscriberService subscriberService, MessageService messageService) {
+    public MessageHandler(SubscriberService subscriberService, CreateMessageService messageService) {
         this.subscriberService = subscriberService;
         this.messageService = messageService;
     }
@@ -40,7 +44,7 @@ public class MessageHandler {
         // 1. Получаем текущий статус участия
         boolean isActive = subscriberService.isUserActive(chatId);
         // 2. Меняем на противоположный
-        subscriberService.activateUserParticipation(chatId);
+        subscriberService.toggleUserParticipation(chatId);
         // 3. Возвращаем статусное сообщение с правильным статусом
         return messageService.createConfirmationMessage(chatId, isActive);
     }
