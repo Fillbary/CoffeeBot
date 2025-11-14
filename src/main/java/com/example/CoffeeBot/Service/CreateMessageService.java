@@ -1,15 +1,11 @@
 package com.example.CoffeeBot.Service;
 
+import com.example.CoffeeBot.Entity.Subscriber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.example.CoffeeBot.Utils.MessageKeyboardUtils;
 
 @Service
 @Slf4j
@@ -43,7 +39,7 @@ public class CreateMessageService {
         String statusText = isActive ? "активно" : "неактивно";
         String welcomeText = String.format(WELCOME_MESSAGE_TEMPLATE, statusText);
         String buttonText = isActive ? "❌ Отключить участие" : "✅ Принять участие";
-        return createMessage(chatId, welcomeText, buttonText);
+        return MessageKeyboardUtils.createMessageWithButton(chatId, welcomeText, buttonText);
     }
 
     /**
@@ -61,7 +57,7 @@ public class CreateMessageService {
                 : String.format(ACTIVATE_MESSAGE_TEMPLATE, statusText);
         String buttonText = isActive ? "✅ Принять участие" : "❌ Отключить участие";
 
-        return createMessage(chatId, confirmText, buttonText);
+        return MessageKeyboardUtils.createMessageWithButton(chatId, confirmText, buttonText);
     }
 
     /**
@@ -69,7 +65,7 @@ public class CreateMessageService {
      * Отображает всплывающее уведомление пользователю
      *
      * @param callbackId идентификатор callback запроса
-     * @param isActive новый статус активности после изменения
+     * @param isActive   новый статус активности после изменения
      * @return AnswerCallbackQuery для отправки в Telegram
      */
     public AnswerCallbackQuery createCallbackAnswer(String callbackId, boolean isActive) {
@@ -81,41 +77,4 @@ public class CreateMessageService {
 
         return answer;
     }
-
-    /**
-     * Вспомогательный метод для создания сообщения с клавиатурой
-     *
-     * @param chatId идентификатор чата получателя
-     * @param messageText текст сообщения
-     * @param buttonText текст для кнопки
-     * @return SendMessage с настроенным текстом и клавиатурой
-     */
-    private SendMessage createMessage(Long chatId, String messageText, String buttonText) {
-        SendMessage message = new SendMessage(chatId.toString(), messageText);
-        message.setReplyMarkup(makeKeyboard(buttonText));
-        message.setParseMode("HTML");
-        return message;
-    }
-
-    /**
-     * Создает inline клавиатуру с одной кнопкой для управления участием
-     *
-     * @param buttonText текст для отображения на кнопке
-     * @return InlineKeyboardMarkup с настроенной кнопкой
-     */
-    private InlineKeyboardMarkup makeKeyboard(String buttonText) {
-        // Создаем кнопку
-        InlineKeyboardButton button = new InlineKeyboardButton(buttonText);
-        button.setCallbackData("toggle_participation");
-        // Создаем ряд кнопок используя InlineKeyboardRow
-        InlineKeyboardRow row = new InlineKeyboardRow();
-        row.add(button);
-        // Создаем список рядов
-        List<InlineKeyboardRow> keyboard = new ArrayList<>();
-        keyboard.add(row);
-        // Создаем InlineKeyboardMarkup с клавиатурой в конструкторе
-        return new InlineKeyboardMarkup(keyboard);
-    }
-
-
 }

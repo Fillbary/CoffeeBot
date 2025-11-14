@@ -43,4 +43,10 @@ public class CoffeeMeeting {
         this.subscriber2 = subscriber2;
         this.subscriber3 = subscriber3;
     }
+
+    public boolean containsUser(Subscriber user) {
+        return (subscriber1 != null && subscriber1.getId().equals(user.getId())) ||
+                (subscriber2 != null && subscriber2.getId().equals(user.getId())) ||
+                (subscriber3 != null && subscriber3.getId().equals(user.getId()));
+    }
 }

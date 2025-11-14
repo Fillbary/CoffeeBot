@@ -101,10 +101,10 @@ public class CreateMeetingMessageService {
         List<Subscriber> partners = new ArrayList<>();
 
         // Добавляем всех участников кроме текущего подписчика
-        if (meeting.getSubscriber1() != null && !meeting.getSubscriber1().equals(subscriber)) {
+        if (!meeting.getSubscriber1().equals(subscriber)) {
             partners.add(meeting.getSubscriber1());
         }
-        if (meeting.getSubscriber2() != null && !meeting.getSubscriber2().equals(subscriber)) {
+        if (!meeting.getSubscriber2().equals(subscriber)) {
             partners.add(meeting.getSubscriber2());
         }
         if (meeting.getSubscriber3() != null && !meeting.getSubscriber3().equals(subscriber)) {

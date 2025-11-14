@@ -33,7 +33,7 @@ public class DateUtils {
         return currentWeekMonday.minusWeeks(weeksBack);
     }
 
-    public LocalDate getCurrentWeekMonday() {
+    public static LocalDate getCurrentWeekMonday() {
         return LocalDate.now().with(DayOfWeek.MONDAY);
     }
 
