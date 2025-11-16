@@ -1,5 +1,6 @@
 package com.example.CoffeeBot.Config;
 
+// лишние импорты
 import com.example.CoffeeBot.CoffeeBot;
 import com.example.CoffeeBot.Handler.ParticipationToggleHandler;
 import com.example.CoffeeBot.Handler.MeetingCancellationHandler;
@@ -19,6 +20,7 @@ public class BotConfig {
     private String botToken;
 
     @Bean
+    // лишний throws
     public TelegramBotsLongPollingApplication telegramBotApi() throws TelegramApiException {
         return new TelegramBotsLongPollingApplication();
     }

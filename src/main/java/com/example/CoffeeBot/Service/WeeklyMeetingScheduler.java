@@ -24,9 +24,15 @@ public class WeeklyMeetingScheduler {
      * - * - любой месяц
      * - MON - понедельник
      */
+    // вот эту настройку крона лучше вынести в конфиг, чтобы можно было ее поменять при необходимости (без необходимости изменения кода)
     @Scheduled(cron = "*/15 * * * * *")
+    // название метода обычно должно содержать глагол
     public void scheduleWeeklyPairGeneration() {
         try {
+            // вот тут я сначала вообще не понял. В scheduled-методе вызывается только отправка уведомлений (sendNotification()). А где собственно генерация пар и вот это все?
+            // оказалось, что она спрятана в методе createNotificationsToUsers, который лежит в методе sendNotification
+            // в общем это очень неочевидно. Название у метода, как будто он просто отправляет уведомление, а на самом деле у него внутри вся главная логика приложения!
+            // я бы сказал что это главная претензия всего этого код-ревью
             notificationSender.sendNotification();
             log.info("✅ Weekly coffee meeting generation completed successfully!");
         } catch (TelegramApiException e) {

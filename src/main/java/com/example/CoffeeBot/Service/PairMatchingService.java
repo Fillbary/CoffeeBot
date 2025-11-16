@@ -15,11 +15,13 @@ import java.util.*;
 @Service
 @Slf4j
 @Transactional
+// казалось бы логика приложения не очень сложная, но кода в этом классе ОЧЕНЬ много. Подумай, нельзя ли как-то его упростить и сократить
 public class PairMatchingService {
     private final SubscriberRepository subscriberRepository;
     private final CoffeeMeetingRepository coffeeMeetingRepository;
     private final DateUtils dateUtils;
 
+    // это тоже лучше вынести в конфиг, потенциально может часто меняться
     private static final int PREVIOUS_WEEKS_TO_CHECK = 1;
 
     public PairMatchingService(SubscriberRepository subscriberRepository,
