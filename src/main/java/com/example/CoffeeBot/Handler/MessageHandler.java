@@ -23,6 +23,7 @@ public class MessageHandler {
     public SendMessage handleMessage(Message message) {
         String text = message.getText();
 
+        // тут лучше заменить if на switch. И читаемость будет лучше, и легче в будущем будет добавлять новые команды
         if ("/start".equals(text)) {
             return handleStartCommand(message.getChatId(), message.getFrom());
         } else if ("/status".equals(text)) {

@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @Slf4j
+// неиспользуемый класс
 public class CreateMeetingMessageService {
     private final String PAIR_MESSAGE_TEMPLATE = """
             ☕ <b>Кофе-митинг назначен!</b> ☕

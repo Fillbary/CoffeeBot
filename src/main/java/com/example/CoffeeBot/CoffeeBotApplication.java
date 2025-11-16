@@ -13,6 +13,7 @@ public class CoffeeBotApplication implements CommandLineRunner {
     private final CoffeeBot coffeeBot;
     private final String botToken;  // Получаем через конструктор
 
+    // раз уж ты используешь lombok, такие конструкторы лучше заменить на @RequiredArgsConstructor
     public CoffeeBotApplication(TelegramBotsLongPollingApplication botsApplication,
                                 CoffeeBot coffeeBot,
                                 String botToken) {  // Spring инжектит бин токена

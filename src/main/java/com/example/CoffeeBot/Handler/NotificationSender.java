@@ -26,6 +26,8 @@ public class NotificationSender {
             try {
                 telegramClient.execute(notification);
                 log.info("Notification sent to chat: {}", notification.getChatId());
+
+                // а для чего тут Thread.sleep? Его использование в коде всегда плохая идея, есть более правильные инструменты для этого (в зависимости от цели)
                 Thread.sleep(100);
             } catch (TelegramApiException e) {
                 log.error("Failed to send notification to chat: {}", notification.getChatId(), e);
@@ -37,8 +39,10 @@ public class NotificationSender {
         }
     }
 
+    // неиспользуемый метод
     public void sendCancelNotification(CoffeeMeeting meeting, Subscriber canceledBy) throws TelegramApiException {
         List<SendMessage> cancelNotifications = meetingNotificationService.createCancellationNotificationsToUsers(meeting, canceledBy);
+        // дублирование кода всегда плохо (разве что в тестах это бывает допустимо). Всегда старайся выделять такие куски в методы/отдельные классы и переиспользовать их
         for (SendMessage cancelNotification : cancelNotifications) {
             try {
                 telegramClient.execute(cancelNotification);

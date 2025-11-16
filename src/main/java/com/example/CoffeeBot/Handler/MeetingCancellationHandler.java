@@ -34,6 +34,8 @@ public class MeetingCancellationHandler {
         this.coffeeMeetingRepository = coffeeMeetingRepository;
     }
 
+    // не стоит так много комментов в коде писать, это сильно затрудняет его читаемость. Лучше стараться писать код, который понятен без комментов :)
+    // комменты стоит писать только изредка в каких-то сложных и неочевидных моментах, когда это действительно упростит понимание
     public CancelCallbackDTO handleCancelMeeting(CallbackQuery callbackQuery) {
         // 1. Получаем текущий статус участия
         boolean isActive = subscriberService.isUserActive(callbackQuery.getMessage().getChatId());
@@ -46,6 +48,7 @@ public class MeetingCancellationHandler {
                 .stream()
                 .filter(meeting -> meeting.containsUser(cancelledByUser)) // используем метод из сущности
                 .findFirst()
+                // вот так лучше не делать, это потенциальный NPE в проде :) ну или далее делать проверки на null везде, куда мы передаем этот объект
                 .orElse(null);
         // 5. Деактивируем пользователя
         subscriberService.toggleUserParticipation(chatId);
